@@ -13,3 +13,6 @@ These are standard user reports and they can be imported in the standard way.
 Please the read how to do it in the following links:
 
 http://www.thatjeffsmith.com/archive/2015/03/how-to-share-reports/
+
+#More Information
+For more information take a look at the wiki: https://github.com/delfino-nunez/SQL-Developer-Reports/wiki
