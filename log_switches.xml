@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="3a5fb334-0121-1000-8001-ac146e39155b" type="" style="Table" enable="true">
+	<name><![CDATA[Log Switches]]></name>
+	<description><![CDATA[Log switch history]]></description>
+	<tooltip><![CDATA[]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE>horizontal</TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[SELECT   trunc(first_time,'DD') SwitchDate, TO_CHAR (first_time, 'Dy') "Day",
+         COUNT (1) "Total",
+         ROUND (COUNT (1) / 24, 2) "Avg/Hour",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '00', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '00', 1, 0))) "00",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '01', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '01', 1, 0))) "01",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '02', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '02', 1, 0))) "02",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '03', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '03', 1, 0))) "03",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '04', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '04', 1, 0))) "04",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '05', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '05', 1, 0))) "05",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '06', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '06', 1, 0))) "06",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '07', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '07', 1, 0))) "07",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '08', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '08', 1, 0))) "08",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '09', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '09', 1, 0))) "09",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '10', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '10', 1, 0))) "10",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '11', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '11', 1, 0))) "11",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '12', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '12', 1, 0))) "12",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '13', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '13', 1, 0))) "13",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '14', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '14', 1, 0))) "14",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '15', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '15', 1, 0))) "15",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '16', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '16', 1, 0))) "16",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '17', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '17', 1, 0))) "17",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '18', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '18', 1, 0))) "18",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '19', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '19', 1, 0))) "19",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '20', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '20', 1, 0))) "20",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '21', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '21', 1, 0))) "21",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '22', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '22', 1, 0))) "22",
+         DECODE (SUM (DECODE (TO_CHAR (first_time, 'hh24'), '23', 1, 0)),0,' ',SUM (DECODE (TO_CHAR (first_time, 'hh24'), '23', 1, 0))) "23"
+    FROM v$log_history
+GROUP BY trunc(first_time,'DD') , TO_CHAR (first_time, 'Dy')
+ORDER BY 1 DESC]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="null" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																																</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<security enable="false" useopenpassword="false" openpassword="null" encryption="EXCLUDE_METADATA">
+				<permission enable="false" permissionpassword="null" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="false" />
+			</security>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+	<display id="" type="" style="Table" enable="true">
+		<name><![CDATA[Day Detail]]></name>
+		<description><![CDATA[Shows the detail for the selected day]]></description>
+		<tooltip><![CDATA[]]></tooltip>
+		<drillclass><![CDATA[]]></drillclass>
+		<CustomValues>
+			<TYPE>horizontal</TYPE>
+		</CustomValues>
+		<query>
+			<sql><![CDATA[SELECT   sequence#,
+          to_char(trunc(first_time,'HH24'),'HH24')|| 'hr' "Hour" ,
+          first_time "Current Log Switch",
+          hr_prev "Hours",
+          min_prev "Minutes",
+          sec_prev "Seconds",
+          next_log_switch "Next Log Swtich"
+    FROM (SELECT sequence#,first_time,
+                 trunc(mod((lag(first_time,1) over (order by first_time desc) - first_time)* 24 ,24)) hr_prev,
+                 trunc(mod((lag(first_time,1) over (order by first_time desc) - first_time)* 24 *60,60)) min_prev,
+                 trunc(mod((lag(first_time,1) over (order by first_time desc) - first_time)* 24 *60 *60,60)) sec_prev,
+                 lag(first_time,1) over (order by first_time desc) next_log_switch
+            FROM v$log_history
+           WHERE first_time between to_date(:SWITCHDATE,'DD-MON-YYYY hh24:mi:ss')
+                                AND to_date(:SWITCHDATE,'DD-MON-YYYY hh24:mi:ss')+1
+          )
+ORDER BY first_time DESC]]></sql>
+			<binds>
+				<bind id="SWITCHDATE">
+					<prompt><![CDATA[SWITCHDATE]]></prompt>
+					<tooltip><![CDATA[SWITCHDATE]]></tooltip>
+					<value><![CDATA[NULL_VALUE]]></value>
+					<bracket><![CDATA[null]]></bracket>
+				</bind>
+			</binds>
+		</query>
+			<pdf version="VERSION_1_7" compression="CONTENT">
+				<docproperty title="" author="" subject="" keywords="" />
+				<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+				<column>
+					<heading font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+					<footing font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+					<blob blob="NONE" zip="false" />
+				</column>
+				<table font="null" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+				<header enable="false" generatedate="false">
+					<data>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					null																																																																																																																								</data>
+				</header>
+				<footer enable="false" generatedate="false">
+					<data value="null" />
+				</footer>
+				<security enable="false" useopenpassword="false" openpassword="null" encryption="EXCLUDE_METADATA">
+					<permission enable="false" permissionpassword="null" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="false" />
+				</security>
+				<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+			</pdf>
+	</display>
+</display>
+</displays>

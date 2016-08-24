@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="a1172c89-0119-1000-8001-ac146e3cae78" type="" style="Table" enable="true">
+	<name><![CDATA[Tablespace]]></name>
+	<description><![CDATA[Tablespace Size and suggest space to add]]></description>
+	<tooltip><![CDATA[Tablespace Information]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE>horizontal</TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[SELECT nvl(name,'=== TOTAL for DB ===') Tablespace                          ,
+  TO_CHAR(SUM(mbytes),'999,999,999.99') "Total MB" ,
+  TO_CHAR(SUM(used),'999,999,999.99') "Used MB"    ,
+  TO_CHAR(SUM(free),'999,999,999.99') "Free MB"    ,
+  ROUND(AVG(pct_used),2) "%Used"                   ,
+  ROUND(AVG(pct_free),2) "%Free"                   ,
+  'SQLDEV:GAUGE:0:100:0:0:'|| AVG(pct_used) AS "Tablespace Utilization"          
+   FROM
+  (SELECT name                ,
+    ROUND(mbytes,2) mbytes    ,
+    ROUND(used,2) used        ,
+    ROUND(free,2) free        ,
+    ROUND(pct_used,2) pct_used,
+    ROUND(pct_free,2) pct_free
+     FROM
+    (SELECT NVL(b.tablespace_name, NVL(a.tablespace_name,'UNKOWN')) name,
+      mbytes_alloc Mbytes                                               ,
+      mbytes_alloc-NVL(mbytes_free,0) used                              ,
+      NVL(mbytes_free,0) free                                           ,
+      ((mbytes_alloc-NVL(mbytes_free,0))/ mbytes_alloc)*100 pct_used    ,
+      100           -(((mbytes_alloc-NVL(mbytes_free,0))/ mbytes_alloc)*100) pct_free
+       FROM
+      (SELECT SUM(bytes)/1024/1024 Mbytes_free,
+        MAX(bytes)      /1024/1024 largest    ,
+        tablespace_name
+         FROM dba_free_space
+     GROUP BY tablespace_name
+      ) a                                      ,
+      (SELECT SUM(bytes)/1024/1024 Mbytes_alloc,
+        SUM(maxbytes)   /1024/1024 Mbytes_max  ,
+        tablespace_name
+         FROM sys.dba_data_files
+     GROUP BY tablespace_name
+    
+    UNION ALL
+       
+       SELECT SUM(bytes)/1024/1024 Mbytes_alloc,
+        SUM(maxbytes)   /1024/1024 Mbytes_max  ,
+        tablespace_name
+         FROM dba_temp_files
+     GROUP BY tablespace_name
+      ) b
+      WHERE a.tablespace_name (+) = b.tablespace_name
+    )
+  )
+GROUP BY rollup (name)
+ORDER BY
+  CASE
+    WHEN name IS NULL
+    THEN 200
+    ELSE ROUND(AVG(pct_free),2)
+  END ASC]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="null" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																				</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<security enable="false" useopenpassword="false" openpassword="null" encryption="EXCLUDE_METADATA">
+				<permission enable="false" permissionpassword="null" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="false" />
+			</security>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+	<display id="" type="" style="Table" enable="true">
+		<name><![CDATA[Tablespace Datafiles ]]></name>
+		<description><![CDATA[Show the datafiles for the selected tablespace.]]></description>
+		<tooltip><![CDATA[Show the datafiles for the selected tablespace.]]></tooltip>
+		<drillclass><![CDATA[]]></drillclass>
+		<CustomValues>
+			<TYPE>horizontal</TYPE>
+		</CustomValues>
+		<query>
+			<sql><![CDATA[select df.file_id,
+       df.file_name AS file_name,
+       substr(df.file_name,1, instr(df.file_name,'/')-1) ASM_DISKGROUP,
+       round(bytes/1024/1024) AS MB,
+       DECODE(df.autoextensible,'YES',round((df.maxbytes - bytes)/1024/1024),'0') AS extend_to_MB,
+       df.autoextensible,
+       round(df.increment_by * nvl((select max(block_size) from dba_tablespaces where tablespace_name = df.tablespace_name),1)/1024/1024)INCREMENT_BY_MB
+  from dba_data_files df
+ where df.tablespace_name = UPPER(:TABLESPACE) 
+UNION ALL
+select tf.file_id,
+       tf.file_name AS file_name,
+       substr(tf.file_name,1, instr(tf.file_name,'/')-1) ASM_DISKGROUP,
+       round(tf.bytes/1024/1024) AS MB,
+       DECODE(tf.autoextensible,'YES',round((tf.maxbytes - tf.bytes)/1024/1024),'0') AS extend_to_MB,
+       tf.autoextensible,
+       round(tf.increment_by * nvl((select max(block_size) from dba_tablespaces where tablespace_name = tf.tablespace_name),1)/1024/1024)INCREMENT_BY_MB
+  from dba_temp_files tf
+ where tablespace_name = UPPER(:TABLESPACE) 
+ order by 1 desc]]></sql>
+			<binds>
+				<bind id="TABLESPACE">
+					<prompt><![CDATA[TABLESPACE]]></prompt>
+					<tooltip><![CDATA[TABLESPACE]]></tooltip>
+					<value><![CDATA[NULL_VALUE]]></value>
+					<bracket><![CDATA[null]]></bracket>
+				</bind>
+			</binds>
+		</query>
+			<pdf version="VERSION_1_7" compression="CONTENT">
+				<docproperty title="" author="" subject="" keywords="" />
+				<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+				<column>
+					<heading font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+					<footing font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+					<blob blob="NONE" zip="false" />
+				</column>
+				<table font="null" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+				<header enable="false" generatedate="false">
+					<data>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					null																																																																																																									</data>
+				</header>
+				<footer enable="false" generatedate="false">
+					<data value="null" />
+				</footer>
+				<security enable="false" useopenpassword="false" openpassword="null" encryption="EXCLUDE_METADATA">
+					<permission enable="false" permissionpassword="null" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="false" />
+				</security>
+				<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+			</pdf>
+	</display>
+</display>
+</displays>

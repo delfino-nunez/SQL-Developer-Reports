@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="93a971d8-0155-1000-8002-ac1905014bc8" type="" style="Table" enable="true">
+	<name><![CDATA[DG Processes Status]]></name>
+	<description><![CDATA[]]></description>
+	<tooltip><![CDATA[]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE>horizontal</TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[SELECT "Instance", "Local Process (pid)", "Client Process (pid)", "BLOCK#", "BLOCKS", "SEQUENCE#", "MB tran/apply", "STATUS" FROM(
+select  
+inst_id "Instance",
+process||' ('||pid||')' "Local Process (pid)", 
+ client_process||' ('||client_pid||')' "Client Process (pid)", 
+ block#,blocks,sequence#, 
+ decode(process,'MRP0',
+  round((block# *512)/1024/1024)||'/'||round((blocks *512)/1024/1024),
+ round((block# *512)/1024/1024)) "MB tran/apply",
+status 
+from gv$managed_standby order by process,sequence#
+)]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="Times New Roman" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				null																																																										</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<security enable="false" useopenpassword="false" openpassword="" encryption="EXCLUDE_METADATA">
+				<permission enable="false" permissionpassword="" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="true" />
+			</security>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+</display>
+</displays>

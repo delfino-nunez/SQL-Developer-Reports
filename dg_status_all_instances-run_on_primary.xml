@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="93ac3f3a-0155-1000-8005-ac1905014bc8" type="" style="Table" enable="true">
+	<name><![CDATA[DG Status (All Instances) - Run On Primary]]></name>
+	<description><![CDATA[]]></description>
+	<tooltip><![CDATA[]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE>horizontal</TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[SELECT "DEST_ID", "DESTINATION", "CURRENT_SEQUENCE", "LAST_ARCHIVED", "LAST_SEQUENCE_APPLIED", "LOGS_TO_APPLY" FROM(
+with seq as (  
+select ads.dest_id,
+       ads.destination,
+	       max(sequence#) current_sequence,
+	       max(log_sequence) last_archived,
+	       max(applied_seq#) last_sequence_applied
+	from v$archived_log al, v$archive_dest ad, v$archive_dest_status ads
+	where ad.dest_id=al.dest_id
+	and al.dest_id=ads.dest_id
+	group by ads.dest_id,ads.destination
+  order by dest_id)
+  select dest_id,nvl(destination,'*PRIMARY*') destination,current_sequence,last_archived,last_sequence_applied, last_archived-last_sequence_applied logs_to_apply
+  from seq
+)]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="Times New Roman" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					null																																																						</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<security enable="false" useopenpassword="false" openpassword="" encryption="EXCLUDE_METADATA">
+				<permission enable="false" permissionpassword="" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="true" />
+			</security>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+</display>
+</displays>

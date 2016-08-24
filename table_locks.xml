@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="cf15555f-0154-1000-8001-ac190501688c" type="" style="Table" enable="true">
+	<name><![CDATA[Table Locks]]></name>
+	<description><![CDATA[Display who and what is locking]]></description>
+	<tooltip><![CDATA[]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE>horizontal</TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[SELECT "OWNER", "OBJECT_NAME", "OBJECT_TYPE", "SID", "SERIAL#", "STATUS", "USERNAME", "OSUSER", "MACHINE", "LOCKED_MODE" FROM(
+select
+   c.owner,
+   c.object_name,
+   c.object_type,
+   b.sid,
+   b.serial#,
+   b.status,
+   b.username,
+   b.osuser,
+   b.machine,
+   case a.locked_mode
+      when 0 then '0 - NONE: lock requested but not yet obtained'
+      when 1 then '1 - NULL'
+      when 2 then '2 - ROWS_S (SS): Row Share Lock'
+      when 3 then '3 - ROW_X (SX): Row Exclusive Table Lock'
+      when 4 then '4 - SHARE (S): Share Table Lock'
+      when 5 then '5 - S/ROW-X (SSX): Share Row Exclusive Table Lock'
+      when 6 then '6 - Exclusive (X): Exclusive Table Lock'
+      else to_char(a.locked_mode)
+  end locked_mode
+from
+   gv$locked_object a ,
+   gv$session b,
+   dba_objects c
+where
+   b.sid = a.session_id
+and
+   a.object_id = c.object_id
+)]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="Times New Roman" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																								</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<security enable="false" useopenpassword="false" openpassword="" encryption="EXCLUDE_METADATA">
+				<permission enable="false" permissionpassword="" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="true" />
+			</security>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+</display>
+</displays>

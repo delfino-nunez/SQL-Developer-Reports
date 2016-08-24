@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="3f309e31-0154-1000-8001-ac190501d1fb" type="" style="Table" enable="true">
+	<name><![CDATA[LongOps]]></name>
+	<description><![CDATA[]]></description>
+	<tooltip><![CDATA[]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE>horizontal</TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[SELECT "SID", "SERIAL#", "MACHINE", "USERNAME", "ELAPSED", "REMAINING", "PROGRESS_PCT", "TARGET", "OPNAME", "MESSAGE", "SQL_EXEC_START" FROM(
+SELECT s.sid,
+       s.serial#,
+       s.machine,
+       s.username,
+       ROUND(sl.elapsed_seconds/60) || ':' || MOD(sl.elapsed_seconds,60) elapsed,
+       ROUND(sl.time_remaining/60) || ':' || MOD(sl.time_remaining,60) remaining,
+       ROUND(sl.sofar/decode(sl.totalwork,0,1)*100, 2) progress_pct,
+       sl.target,
+       sl.opname,
+       sl.message,
+       sl.sql_exec_start
+FROM   gv$session s,
+       gv$session_longops sl
+WHERE  s.sid     = sl.sid
+AND    s.serial# = sl.serial#
+)]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="null" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<security enable="false" useopenpassword="false" openpassword="null" encryption="EXCLUDE_METADATA">
+				<permission enable="false" permissionpassword="null" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="false" />
+			</security>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+</display>
+</displays>
