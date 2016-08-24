@@ -1,7 +1,7 @@
 # SQL-Developer-Reports
 The SQL Developer Reports are provided as is, please review them before using them.
 
-#SQL Developer Verion
+#SQL Developer Version
 The reports run on the following version: Version 4.1.3.20
 
 #RAC
