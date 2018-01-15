@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="bc05e9ef-0155-1000-8002-ac190501079d" type="" style="Table" enable="true">
-	<name><![CDATA[Temp Usage (sort, hash)]]></name>
+<display id="84004e5e-015f-1000-8006-ac172116eba2" type="" style="Table" enable="true">
+	<name><![CDATA[ILM Tasks]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,17 +9,10 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
-select  s.sid, s.osuser, s.process, s.username,
-        s.sql_id, tmp.segtype, 
-       ((tmp.blocks*8)/1024)MB, tmp.tablespace
-from  
-       v$tempseg_usage tmp,  
-       v$session s
-where tmp.session_num=s.serial#
-and segtype in ('HASH','SORT')
-order by blocks desc
-)]]></sql>
+		<sql><![CDATA[select t.task_id, t.task_owner, t.state,e.policy_name, e.object_owner, e.object_name,e.SELECTED_FOR_EXECUTION
+       ,r.job_name,r.job_state,r.start_time,r.completion_time,r.statistics
+   from dba_ilmtasks t,dba_ilmevaluationdetails e,dba_ilmresults r
+   where    t.task_id=e.task_id(+)    and  t.task_id=r.task_id(+)  and e.object_owner = user]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />
@@ -40,47 +33,7 @@ order by blocks desc
 				
 				
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																																				</data>
+				null																																				</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

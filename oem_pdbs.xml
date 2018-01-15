@@ -6,7 +6,7 @@
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
 	<CustomValues>
-		<TYPE>horizontal</TYPE>
+		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
 		<sql><![CDATA[SELECT "DISPLAY_NAME", "TARGET_NAME", "TARGET_TYPE", "TYPE_DISPLAY_NAME", "HOST_NAME" FROM(
@@ -36,14 +36,51 @@ order by target_name
 					
 					
 					
-					null																																																	</data>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					null																																																																																																																																																																																																																																																									</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />
 			</footer>
-			<security enable="false" useopenpassword="false" openpassword="" encryption="EXCLUDE_METADATA">
-				<permission enable="false" permissionpassword="" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="true" />
-			</security>
 			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
 		</pdf>
 </display>

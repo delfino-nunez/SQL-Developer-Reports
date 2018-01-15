@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="bc05e9ef-0155-1000-8002-ac190501079d" type="" style="Table" enable="true">
-	<name><![CDATA[Temp Usage (sort, hash)]]></name>
+<display id="16bd3936-015f-1000-8001-ac1721166bab" type="" style="Table" enable="true">
+	<name><![CDATA[Compress log]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,17 +9,9 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
-select  s.sid, s.osuser, s.process, s.username,
-        s.sql_id, tmp.segtype, 
-       ((tmp.blocks*8)/1024)MB, tmp.tablespace
-from  
-       v$tempseg_usage tmp,  
-       v$session s
-where tmp.session_num=s.serial#
-and segtype in ('HASH','SORT')
-order by blocks desc
-)]]></sql>
+		<sql><![CDATA[select *
+from spot2.compress_log
+order by log_time DESC]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />
@@ -41,46 +33,7 @@ order by blocks desc
 				
 				
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																																				</data>
+				null																																								</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

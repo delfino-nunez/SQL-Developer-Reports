@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="bc05e9ef-0155-1000-8002-ac190501079d" type="" style="Table" enable="true">
-	<name><![CDATA[Temp Usage (sort, hash)]]></name>
+<display id="65363b49-0159-1000-8001-ac1905010eb4" type="" style="Table" enable="true">
+	<name><![CDATA[Process Count]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,16 +9,20 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
-select  s.sid, s.osuser, s.process, s.username,
-        s.sql_id, tmp.segtype, 
-       ((tmp.blocks*8)/1024)MB, tmp.tablespace
-from  
-       v$tempseg_usage tmp,  
-       v$session s
-where tmp.session_num=s.serial#
-and segtype in ('HASH','SORT')
-order by blocks desc
+		<sql><![CDATA[SELECT "INST_ID", "USERNAME", "PROGRAM", "MACHINE", "COUNT(*)" FROM(
+SELECT s.inst_id,
+       s.username,
+       s.program,
+       machine,
+       count(*)
+FROM   gv$session s
+       JOIN gv$process p ON p.addr = s.paddr AND p.inst_id = s.inst_id
+WHERE  s.type != 'BACKGROUND'
+group by s.inst_id,
+       s.username,
+       s.program,
+       machine
+order by inst_id
 )]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
@@ -64,23 +68,7 @@ order by blocks desc
 				
 				
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																																				</data>
+				null																																																																																																																																				</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

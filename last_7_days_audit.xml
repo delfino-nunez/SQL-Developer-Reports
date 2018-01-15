@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="bc05e9ef-0155-1000-8002-ac190501079d" type="" style="Table" enable="true">
-	<name><![CDATA[Temp Usage (sort, hash)]]></name>
+<display id="d0e319ee-015c-1000-8001-ac1721162383" type="" style="Table" enable="true">
+	<name><![CDATA[Last 7 Days of Audit]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,16 +9,11 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
-select  s.sid, s.osuser, s.process, s.username,
-        s.sql_id, tmp.segtype, 
-       ((tmp.blocks*8)/1024)MB, tmp.tablespace
-from  
-       v$tempseg_usage tmp,  
-       v$session s
-where tmp.session_num=s.serial#
-and segtype in ('HASH','SORT')
-order by blocks desc
+		<sql><![CDATA[SELECT "OS_USERNAME", "USERNAME", "USERHOST", "TERMINAL", "TIMESTAMP", "OWNER", "OBJ_NAME", "ACTION_NAME", "PRIV_USED" FROM(
+select os_username,username,userhost,terminal,timestamp,owner,obj_name,action_name,priv_used
+from dba_audit_trail
+where timestamp > sysdate -7
+order by timestamp desc
 )]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
@@ -33,54 +28,21 @@ order by blocks desc
 			<header enable="false" generatedate="false">
 				<data>
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																																				</data>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					null																																																																															</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

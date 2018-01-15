@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="830bb305-015b-1000-8001-ac1721161abe" type="" style="Table" enable="true">
+	<name><![CDATA[ASM Files]]></name>
+	<description><![CDATA[]]></description>
+	<tooltip><![CDATA[]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE><![CDATA[horizontal]]></TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[SELECT "FULL_PATH", "BYTES", "SPACE", "TYPE", "CREATION_DATE", "DISK_GROUP_NAME", "SYSTEM_CREATED" FROM(
+SELECT
+    CONCAT('+' || db_files.disk_group_name, SYS_CONNECT_BY_PATH(db_files.alias_name, '/')) full_path
+  , db_files.bytes
+  , db_files.space
+  , NVL(LPAD(db_files.type, 18), '<DIRECTORY>')  type
+  , db_files.creation_date
+  , db_files.disk_group_name
+  , LPAD(db_files.system_created, 4) system_created
+FROM
+    ( SELECT
+          g.name               disk_group_name
+        , a.parent_index       pindex
+        , a.name               alias_name
+        , a.reference_index    rindex
+        , a.system_created     system_created
+        , f.bytes/1024/1024/1024  Gbytes
+        , f.bytes              bytes
+        , f.space              space
+        , f.type               type
+        , TO_CHAR(f.creation_date, 'DD-MON-YYYY HH24:MI:SS')  creation_date
+      FROM
+          v$asm_file f RIGHT OUTER JOIN v$asm_alias     a USING (group_number, file_number)
+                                   JOIN v$asm_diskgroup g USING (group_number)
+    ) db_files
+WHERE db_files.type IS NOT NULL
+START WITH (MOD(db_files.pindex, POWER(2, 24))) = 0
+    CONNECT BY PRIOR db_files.rindex = db_files.pindex
+UNION
+SELECT
+    '+' || volume_files.disk_group_name ||  ' [' || volume_files.volume_name || '] ' ||  volume_files.volume_device full_path
+  , volume_files.bytes
+  , volume_files.space
+  , NVL(LPAD(volume_files.type, 18), '<DIRECTORY>')  type
+  , volume_files.creation_date
+  , volume_files.disk_group_name
+  , null
+FROM
+    ( SELECT
+          g.name               disk_group_name
+        , v.volume_name        volume_name
+        , v.volume_device       volume_device
+        , f.bytes              bytes
+        , f.space              space
+        , f.type               type
+        , TO_CHAR(f.creation_date, 'DD-MON-YYYY HH24:MI:SS')  creation_date
+      FROM
+          v$asm_file f RIGHT OUTER JOIN v$asm_volume    v USING (group_number, file_number)
+                                   JOIN v$asm_diskgroup g USING (group_number)
+    ) volume_files
+WHERE volume_files.type IS NOT NULL
+)]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="Times New Roman" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				null																																																																																																																																</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+</display>
+</displays>

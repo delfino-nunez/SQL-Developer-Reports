@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="bc05e9ef-0155-1000-8002-ac190501079d" type="" style="Table" enable="true">
-	<name><![CDATA[Temp Usage (sort, hash)]]></name>
+<display id="231ce6ee-0160-1000-8001-ac17211669d2" type="" style="Table" enable="true">
+	<name><![CDATA[DG Max Metrics]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,17 +9,27 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
-select  s.sid, s.osuser, s.process, s.username,
-        s.sql_id, tmp.segtype, 
-       ((tmp.blocks*8)/1024)MB, tmp.tablespace
-from  
-       v$tempseg_usage tmp,  
-       v$session s
-where tmp.session_num=s.serial#
-and segtype in ('HASH','SORT')
-order by blocks desc
-)]]></sql>
+		<sql><![CDATA[select * 
+from (select target_name, rollup_month "Month", metric, Monthly_max_average
+from (select target_name, trunc(rollup_timestamp,'MONTH') rollup_month,column_label metric, nvl(max(average),0) Monthly_MAX_Average
+from (SELECT 
+      mh.target_name,
+      TRUNC(mh.ROLLUP_TIMESTAMP, 'HH24') ROLLUP_TIMESTAMP,
+      mh.metric_label, 
+      mh.column_label,
+      ROUND(mh.AVERAGE, 2) AVERAGE
+  FROM MGMT$METRIC_HOURLY mh
+  WHERE mh.metric_label = 'Data Guard Performance'
+    AND mh.column_label in ('Apply Lag (seconds)','Estimated Failover Time (seconds)','Redo Apply Rate (KB/second)','Transport Lag (seconds)')
+    AND mh.rollup_timestamp >= SYSDATE - 120)
+where column_label <> 'Redo Apply Rate (KB/second)'
+group by target_name, trunc(rollup_timestamp,'MONTH'),column_label)
+)
+pivot (
+max(monthly_max_average)
+for metric in ('Transport Lag (seconds)' "Max Transport Lag (sec)", 'Apply Lag (seconds)' "Max Apply Lag (sec)", 'Estimated Failover Time (seconds)' "Max Estimated Failover (sec)")
+)
+order by 1,2 desc]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />
@@ -33,54 +43,9 @@ order by blocks desc
 			<header enable="false" generatedate="false">
 				<data>
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																																				</data>
+					
+					
+					null																			</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

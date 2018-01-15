@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="bc05e9ef-0155-1000-8002-ac190501079d" type="" style="Table" enable="true">
-	<name><![CDATA[Temp Usage (sort, hash)]]></name>
+<display id="83f0d3f1-015f-1000-8005-ac172116eba2" type="" style="Table" enable="true">
+	<name><![CDATA[ILM Object Policies]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,17 +9,15 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
-select  s.sid, s.osuser, s.process, s.username,
-        s.sql_id, tmp.segtype, 
-       ((tmp.blocks*8)/1024)MB, tmp.tablespace
-from  
-       v$tempseg_usage tmp,  
-       v$session s
-where tmp.session_num=s.serial#
-and segtype in ('HASH','SORT')
-order by blocks desc
-)]]></sql>
+		<sql><![CDATA[select p.policy_name,p.policy_type,p.enabled,
+       pd.action_type,pd.scope,pd.compression_level,pd.condition_type,pd.condition_days,
+       o.object_owner,o.object_name,o.subobject_name,o.object_type,o.inherited_from,
+       tp.tablespace_name, tp.compression, tp.compress_for,tp.high_value
+from dba_ilmpolicies p inner join dba_ilmdatamovementpolicies pd on (p.policy_name = pd.policy_name)
+                       inner join dba_ilmobjects o on (p.policy_name = o.policy_name)
+                       left join dba_tab_partitions tp on (tp.table_name = o.object_name 
+                                                             and tp.table_owner = o.object_owner
+                                                             and tp.partition_name = o.subobject_name)]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />
@@ -40,47 +38,7 @@ order by blocks desc
 				
 				
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																																				</data>
+				null																																				</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

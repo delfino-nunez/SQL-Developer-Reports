@@ -6,7 +6,7 @@
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
 	<CustomValues>
-		<TYPE>horizontal</TYPE>
+		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
 		<sql><![CDATA[SELECT s.username, u.tablespace, u.contents, u.extents, u.blocks, u.blocks * 8192 "Size bytes (8K block)"
@@ -42,14 +42,51 @@ WHERE s.saddr=u.session_addr]]></sql>
 				
 				
 				
-				null																																																																												</data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																																																																																																																																																																												</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />
 			</footer>
-			<security enable="false" useopenpassword="false" openpassword="" encryption="EXCLUDE_METADATA">
-				<permission enable="false" permissionpassword="" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="true" />
-			</security>
 			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
 		</pdf>
 </display>

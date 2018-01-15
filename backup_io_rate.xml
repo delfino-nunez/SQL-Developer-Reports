@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="bc05e9ef-0155-1000-8002-ac190501079d" type="" style="Table" enable="true">
-	<name><![CDATA[Temp Usage (sort, hash)]]></name>
+<display id="58f5271f-015b-1000-8001-ac172116db6d" type="" style="Table" enable="true">
+	<name><![CDATA[Backup IO Rate]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,16 +9,19 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
-select  s.sid, s.osuser, s.process, s.username,
-        s.sql_id, tmp.segtype, 
-       ((tmp.blocks*8)/1024)MB, tmp.tablespace
-from  
-       v$tempseg_usage tmp,  
-       v$session s
-where tmp.session_num=s.serial#
-and segtype in ('HASH','SORT')
-order by blocks desc
+		<sql><![CDATA[SELECT "Device", "TYPE", "FILENAME", "OPEN", "CLOSE", "IO Ratio %", "IO_COUNT", "LONG_WAITS" FROM(
+with backup_aio as (
+select device_type "Device", type, filename, 
+to_char(open_time, 'mm/dd/yyyy hh24:mi:ss') open,
+to_char(close_time,'mm/dd/yyyy hh24:mi:ss') close,
+elapsed_time Elapse_time, 
+effective_bytes_per_second eps,
+io_count, ready, short_waits, long_waits, round(long_waits/decode(io_count,0,1,io_count) * 100) "IO Ratio %"
+from gv$backup_async_io
+where close_time > sysdate - 30)
+select "Device", type, filename, open, close,"IO Ratio %" , io_count, long_waits
+from backup_aio
+order by open desc
 )]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
@@ -33,54 +36,33 @@ order by blocks desc
 			<header enable="false" generatedate="false">
 				<data>
 				
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 				
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																																				</data>
+				null																																																																																																																																								</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

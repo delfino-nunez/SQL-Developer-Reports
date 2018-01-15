@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="3f309e31-0154-1000-8001-ac190501d1fb" type="" style="Table" enable="true">
-	<name><![CDATA[LongOps]]></name>
-	<description><![CDATA[]]></description>
+<display id="aac82b7a-0153-1000-8001-ac1905012187" type="" style="Table" enable="true">
+	<name><![CDATA[Orphaned DataPump Tables]]></name>
+	<description><![CDATA[Display Orphaned data pump tables]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
 	<CustomValues>
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "SERIAL#", "MACHINE", "USERNAME", "ELAPSED", "REMAINING", "PROGRESS_PCT", "TARGET", "OPNAME", "MESSAGE", "SQL_EXEC_START" FROM(
-SELECT s.sid,
-       s.serial#,
-       s.machine,
-       s.username,
-       ROUND(sl.elapsed_seconds/60) || ':' || MOD(sl.elapsed_seconds,60) elapsed,
-       ROUND(sl.time_remaining/60) || ':' || MOD(sl.time_remaining,60) remaining,
-       ROUND(sl.sofar/decode(sl.totalwork,0,1)*100, 2) progress_pct,
-       sl.target,
-       sl.opname,
-       sl.message,
-       sl.sql_exec_start
-FROM   gv$session s,
-       gv$session_longops sl
-WHERE  s.sid     = sl.sid
-AND    s.serial# = sl.serial#
-)]]></sql>
+		<sql><![CDATA[SELECT o.status,
+o.object_id,
+o.object_type,
+o.owner
+||'.'
+||object_name "OWNER.OBJECT"
+FROM dba_objects o,
+dba_datapump_jobs j
+WHERE o.owner =j.owner_name
+AND o.object_name=j.job_name
+AND j.job_name NOT LIKE 'BIN$%'
+ORDER BY 4,2]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />
@@ -97,7 +92,10 @@ AND    s.serial# = sl.serial#
 				
 				
 				
-				null																																																																																																																																																																																																																																																</data>
+				
+				
+				
+				null																																																																																																																																																																																																																																																												</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

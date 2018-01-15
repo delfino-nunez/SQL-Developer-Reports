@@ -6,7 +6,7 @@
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
 	<CustomValues>
-		<TYPE>horizontal</TYPE>
+		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
 		<sql><![CDATA[SELECT "OWNER", "OBJECT_NAME", "OBJECT_TYPE", "SID", "SERIAL#", "STATUS", "USERNAME", "OSUSER", "MACHINE", "LOCKED_MODE" FROM(
@@ -68,14 +68,51 @@ and
 				
 				
 				
-				null																																																																								</data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																																																																																																																																																																								</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />
 			</footer>
-			<security enable="false" useopenpassword="false" openpassword="" encryption="EXCLUDE_METADATA">
-				<permission enable="false" permissionpassword="" allowcopying="true" allowprinting="true" allowupdating="false" allowaccessdevices="true" />
-			</security>
 			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
 		</pdf>
 </display>

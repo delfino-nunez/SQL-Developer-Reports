@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="3f309e31-0154-1000-8001-ac190501d1fb" type="" style="Table" enable="true">
-	<name><![CDATA[LongOps]]></name>
+<display id="3f9c9d25-0154-1000-8002-ac190501d1fb" type="" style="Table" enable="true">
+	<name><![CDATA[SQL Execution]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,23 +9,11 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "SERIAL#", "MACHINE", "USERNAME", "ELAPSED", "REMAINING", "PROGRESS_PCT", "TARGET", "OPNAME", "MESSAGE", "SQL_EXEC_START" FROM(
-SELECT s.sid,
-       s.serial#,
-       s.machine,
-       s.username,
-       ROUND(sl.elapsed_seconds/60) || ':' || MOD(sl.elapsed_seconds,60) elapsed,
-       ROUND(sl.time_remaining/60) || ':' || MOD(sl.time_remaining,60) remaining,
-       ROUND(sl.sofar/decode(sl.totalwork,0,1)*100, 2) progress_pct,
-       sl.target,
-       sl.opname,
-       sl.message,
-       sl.sql_exec_start
-FROM   gv$session s,
-       gv$session_longops sl
-WHERE  s.sid     = sl.sid
-AND    s.serial# = sl.serial#
-)]]></sql>
+		<sql><![CDATA[select inst_id,substr(SQL_TEXT,1,100) SQL,count(*) cnt
+from gv$sql
+where executions=1
+group by inst_id,substr(SQL_TEXT,1,100)
+order by cnt desc]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />

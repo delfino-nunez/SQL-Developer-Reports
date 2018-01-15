@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="83d0fa82-015f-1000-8001-ac172116eba2" type="" style="Table" enable="true">
+	<name><![CDATA[Table Date Partitions Info]]></name>
+	<description><![CDATA[]]></description>
+	<tooltip><![CDATA[]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE><![CDATA[horizontal]]></TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[with date_partitions as
+  (select dbms_xmlgen.getxmltype('
+select p.table_owner, 
+       p.table_name, 
+       p.partition_name,
+       p.high_value,
+       p.subpartition_count,
+       p.tablespace_name,
+       p.compression,
+       p.compress_for,
+       p.last_analyzed
+from   dba_part_key_columns k, 
+       dba_tab_cols c, 
+       dba_tab_partitions p
+where  k.owner = c.owner
+and    k.column_name = c.column_name
+and    k.name = c.table_name
+and    k.owner = p.table_owner
+and    k.name = p.table_name
+and    (c.data_type = ''DATE'' or 
+        c.data_type like ''TIMESTAMP%'')') 
+          as xml
+   from   dual),
+table_info as(
+SELECT  x.*,
+        to_date(substr(x.high_value,
+               instr(x.high_value, '''')+2,
+               19),
+        'yyyy-mm-dd hh24:mi:ss')part_high_date
+FROM    date_partitions p, 
+        xmltable('/ROWSET/ROW'
+          passing p.xml
+          columns table_owner varchar2(30) path '/ROW/TABLE_OWNER',
+                  table_name varchar2(30)  path '/ROW/TABLE_NAME',
+                  partition_name varchar2(30) path '/ROW/PARTITION_NAME',
+                  subpartition_count number  path '/ROW/SUBPARTITION_COUNT',
+                  high_value varchar2(30)  path '/ROW/HIGH_VALUE',
+                  tablespace_name varchar2(30) path '/ROW/TABLESPACE_NAME',
+                  compression varchar2(20) path '/ROW/COMPRESSION',
+                  compress_for varchar2(30) path '/ROW/COMPRESS_FOR',
+                  last_analyzed varchar2(30) path '/ROW/LAST_ANALYZED'
+         ) x )
+select * from table_info order by table_owner,table_name,part_high_date desc]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="Times New Roman" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="Times New Roman" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																				</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+</display>
+</displays>
