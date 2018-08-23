@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="dc2360b7-0155-1000-800e-ac190501c23b" type="" style="Table" enable="true">
-	<name><![CDATA[DG Applied Sequences]]></name>
+<display id="1809b1f7-0163-1000-8003-ac1b080501dc" type="" style="Table" enable="true">
+	<name><![CDATA[RMAN Backup History]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,13 +9,15 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "INST_ID", "SEQUENCE#", "APPLIED", "STATUS", "THREAD#", "ARCHIVAL_THREAD#", "ARCHIVED", "DELETED", "COMPRESSED", "Size MB", "COMPLETION_TIME", "CREATOR", "REGISTRAR", "IS_RECOVERY_DEST_FILE" FROM(
-select distinct inst_id, sequence#,applied,status,THREAD#, archival_thread#, archived,deleted,compressed,
-round((blocks*block_size)/1024/1024) "Size MB",completion_time,
-creator,registrar,is_Recovery_Dest_file
-from gv$archived_log 
-where sequence# > (select max(sequence#) - 10 from gv$archived_log)
-order by 1,2 asc
+		<sql><![CDATA[SELECT "SESSION_KEY", "INPUT_TYPE", "STATUS", "RMAN_BKUP_START_TIME", "RMAN_BKUP_END_TIME", "HOURS" FROM(
+SELECT session_key,
+       input_type,
+       status,
+       TO_CHAR(start_time,'mm-dd-yyyy hh24:mi:ss') AS rman_bkup_start_time,
+       TO_CHAR(end_time,'mm-dd-yyyy hh24:mi:ss') AS rman_bkup_end_time,
+       round(elapsed_seconds / 3600,2) hours
+  FROM v$rman_backup_job_details
+ ORDER BY session_key
 )]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
@@ -30,63 +32,10 @@ order by 1,2 asc
 			<header enable="false" generatedate="false">
 				<data>
 				
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					null																																																																																																																																																																																																																																																																																																	</data>
+				
+				
+				
+				null																				</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

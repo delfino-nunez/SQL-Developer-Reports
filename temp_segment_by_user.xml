@@ -9,9 +9,11 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT s.username, u.tablespace, u.contents, u.extents, u.blocks, u.blocks * 8192 "Size bytes (8K block)"
-FROM v$session s, v$sort_usage u
-WHERE s.saddr=u.session_addr]]></sql>
+		<sql><![CDATA[SELECT s.inst_id,s.username, s.osuser, s.machine, u.tablespace, u.contents, u.extents, u.blocks, u.blocks * 8192 "Size bytes (8K block)",
+(u.blocks * 8192)/1024/1024 MB
+FROM gv$session s, gv$sort_usage u
+WHERE s.saddr=u.session_addr
+and s.inst_id = u.inst_id]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />
@@ -82,7 +84,17 @@ WHERE s.saddr=u.session_addr]]></sql>
 				
 				
 				
-				null																																																																																																																																																																																																																																												</data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																																																																																																																																																																																																																				</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

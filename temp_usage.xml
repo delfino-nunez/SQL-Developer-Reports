@@ -9,15 +9,16 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
-select  s.sid, s.osuser, s.process, s.username,
+		<sql><![CDATA[SELECT "INST_ID", "SID", "OSUSER", "PROCESS", "USERNAME", "SQL_ID", "SEGTYPE", "MB", "TABLESPACE" FROM(
+select  tmp.inst_id,s.sid, s.osuser, s.process, s.username,
         s.sql_id, tmp.segtype, 
        ((tmp.blocks*8)/1024)MB, tmp.tablespace
 from  
-       v$tempseg_usage tmp,  
-       v$session s
+       gv$tempseg_usage tmp,  
+       gv$session s
 where tmp.session_num=s.serial#
 and segtype in ('HASH','SORT')
+and tmp.inst_id = s.inst_id
 order by blocks desc
 )]]></sql>
 	</query>
@@ -80,7 +81,17 @@ order by blocks desc
 				
 				
 				
-				null																																																																																																																																																																																																				</data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																																																																																																																																																																												</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

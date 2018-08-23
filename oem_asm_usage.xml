@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="dc2360b7-0155-1000-800e-ac190501c23b" type="" style="Table" enable="true">
-	<name><![CDATA[DG Applied Sequences]]></name>
+<display id="0415a362-0163-1000-8001-ac1b080501dc" type="" style="Table" enable="true">
+	<name><![CDATA[EM ASM Usage]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,13 +9,25 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "INST_ID", "SEQUENCE#", "APPLIED", "STATUS", "THREAD#", "ARCHIVAL_THREAD#", "ARCHIVED", "DELETED", "COMPRESSED", "Size MB", "COMPLETION_TIME", "CREATOR", "REGISTRAR", "IS_RECOVERY_DEST_FILE" FROM(
-select distinct inst_id, sequence#,applied,status,THREAD#, archival_thread#, archived,deleted,compressed,
-round((blocks*block_size)/1024/1024) "Size MB",completion_time,
-creator,registrar,is_Recovery_Dest_file
-from gv$archived_log 
-where sequence# > (select max(sequence#) - 10 from gv$archived_log)
-order by 1,2 asc
+		<sql><![CDATA[SELECT "ASM_DB", "DISK_GROUP", "USABLE_SPACE_USED_PCT", "USABLE_TOTAL_SIZE_GB", "USABLE_FREE_GB", "USED_PCT", "FREE_PCT", "SIZE_GB", "FREE_GB" FROM(
+select  upper(replace(replace(target_name,'+ASM_'),'-clu1')) ASM_DB,key_value DISK_GROUP, 
+max(case when metric_column = 'safe_percent_used' then ROUND(value,2) else null end ) USABLE_SPACE_USED_PCT,
+max(case when metric_column = 'usable_total_mb' then ROUND(to_number(value)/1024) else null end ) USABLE_TOTAL_SIZE_GB,
+max(case when metric_column = 'usable_file_mb' then ROUND(value/1024) else null end ) USABLE_FREE_GB,
+
+max(case when metric_column = 'percent_used' then ROUND(value,2) else null end ) USED_PCT,
+max(case when metric_column = 'percent_used' then round(100-value,2) else null end ) FREE_PCT,
+max(case when metric_column = 'total_mb' then ROUND(value/1024) else null end ) SIZE_GB,
+max(case when metric_column = 'free_mb' then ROUND(value/1024) else null end ) FREE_GB
+from
+(
+select target_name,key_value, metric_column, value
+       from sysman.mgmt$metric_current 
+       where metric_name = 'DiskGroup_Usage'
+       and target_type in ('osm_instance','osm_cluster')
+)
+group by target_name,key_value
+order by 1,8 desc
 )]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
@@ -33,60 +45,7 @@ order by 1,2 asc
 					
 					
 					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					null																																																																																																																																																																																																																																																																																																	</data>
+					null																								</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

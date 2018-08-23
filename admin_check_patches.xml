@@ -1,18 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="5058568e-0158-1000-8002-ac190501d649" type="" style="Table" enable="true">
-	<name><![CDATA[SQL Execution Time (v$SQLAREA)]]></name>
+<display id="e4474956-0162-1000-8001-ac1b0805ecee" type="" style="Script" enable="true">
+	<name><![CDATA[Check Patches]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
 	<CustomValues>
-		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "SECS_PER_EXEC", "EXECUTIONS", "SQL_ID", "SQL_TEXT" FROM(
-select round(elapsed_time/1000000/decode(executions,0,1,executions),2) secs_per_exec, executions, sql_id, sql_text      
-from v$sqlarea order by elapsed_time/decode(executions,0,1,executions) desc
-)]]></sql>
+		<sql><![CDATA[SET LINESIZE 500
+SET PAGESIZE 1000
+SET SERVEROUT ON
+SET LONG 2000000
+
+COLUMN action_time FORMAT A20
+COLUMN action FORMAT A10
+COLUMN bundle_series FORMAT A10
+COLUMN comments FORMAT A30
+COLUMN description FORMAT A40
+COLUMN namespace FORMAT A20
+COLUMN status FORMAT A10
+COLUMN version FORMAT A10
+
+SELECT TO_CHAR(action_time, 'DD-MON-YYYY HH24:MI:SS') AS action_time,
+ action,
+ status,
+ description,
+ version,
+ patch_id,
+ bundle_series
+ FROM   sys.dba_registry_sqlpatch
+ ORDER by action_time;
+ 
+
+SELECT TO_CHAR(action_time, 'DD-MON-YYYY HH24:MI:SS') AS action_time,
+       action,
+       namespace,
+       version,
+       id,
+       comments,
+       bundle_series
+FROM   sys.registry$history
+ORDER by action_time;]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />
@@ -30,45 +59,7 @@ from v$sqlarea order by elapsed_time/decode(executions,0,1,executions) desc
 				
 				
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																</data>
+				null																								</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

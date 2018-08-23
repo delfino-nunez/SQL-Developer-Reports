@@ -72,7 +72,17 @@ select * from table_info order by table_owner,table_name,part_high_date desc]]><
 				
 				
 				
-				null																																				</data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																												</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

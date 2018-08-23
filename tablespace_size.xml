@@ -133,7 +133,17 @@ ORDER BY
 				
 				
 				
-				null																																																																																																																																																																																																																																																				</data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																																																																																																																																																																																																																												</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />
@@ -141,7 +151,7 @@ ORDER BY
 			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
 		</pdf>
 	<display id="" type="" style="Table" enable="true">
-		<name><![CDATA[Tablespace Datafiles ]]></name>
+		<name><![CDATA[Tablespace Datafiles      ]]></name>
 		<description><![CDATA[Show the datafiles for the selected tablespace.]]></description>
 		<tooltip><![CDATA[Show the datafiles for the selected tablespace.]]></tooltip>
 		<drillclass><![CDATA[]]></drillclass>
@@ -249,7 +259,17 @@ select tf.file_id,
 					
 					
 					
-					null																																																																																																																																																																																																																																																																																																																	</data>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					null																																																																																																																																																																																																																																																																																																																																																																			</data>
 				</header>
 				<footer enable="false" generatedate="false">
 					<data value="null" />

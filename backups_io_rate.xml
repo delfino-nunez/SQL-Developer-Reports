@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="dc2360b7-0155-1000-800e-ac190501c23b" type="" style="Table" enable="true">
-	<name><![CDATA[DG Applied Sequences]]></name>
+<display id="58f5271f-015b-1000-8001-ac172116db6d" type="" style="Table" enable="true">
+	<name><![CDATA[Backup IO Rate]]></name>
 	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
@@ -9,13 +9,19 @@
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT "INST_ID", "SEQUENCE#", "APPLIED", "STATUS", "THREAD#", "ARCHIVAL_THREAD#", "ARCHIVED", "DELETED", "COMPRESSED", "Size MB", "COMPLETION_TIME", "CREATOR", "REGISTRAR", "IS_RECOVERY_DEST_FILE" FROM(
-select distinct inst_id, sequence#,applied,status,THREAD#, archival_thread#, archived,deleted,compressed,
-round((blocks*block_size)/1024/1024) "Size MB",completion_time,
-creator,registrar,is_Recovery_Dest_file
-from gv$archived_log 
-where sequence# > (select max(sequence#) - 10 from gv$archived_log)
-order by 1,2 asc
+		<sql><![CDATA[SELECT "Device", "TYPE", "FILENAME", "OPEN", "CLOSE", "IO Ratio %", "IO_COUNT", "LONG_WAITS" FROM(
+with backup_aio as (
+select device_type "Device", type, filename, 
+to_char(open_time, 'mm/dd/yyyy hh24:mi:ss') open,
+to_char(close_time,'mm/dd/yyyy hh24:mi:ss') close,
+elapsed_time Elapse_time, 
+effective_bytes_per_second eps,
+io_count, ready, short_waits, long_waits, round(long_waits/decode(io_count,0,1,io_count) * 100) "IO Ratio %"
+from gv$backup_async_io
+where close_time > sysdate - 30)
+select "Device", type, filename, open, close,"IO Ratio %" , io_count, long_waits
+from backup_aio
+order by open desc
 )]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
@@ -64,29 +70,9 @@ order by 1,2 asc
 					
 					
 					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					null																																																																																																																																																																																																																																																																																																	</data>
+				
+				
+				null																																																																																																																																																																																										</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

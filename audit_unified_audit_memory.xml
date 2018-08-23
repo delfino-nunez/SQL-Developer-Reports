@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <displays>
-<display id="aac82b7a-0153-1000-8001-ac1905012187" type="" style="Table" enable="true">
-	<name><![CDATA[Orphaned DataPump Tables]]></name>
-	<description><![CDATA[Display Orphaned data pump tables]]></description>
+<display id="2c6d88be-0163-1000-8002-ac1b0802f07e" type="" style="Table" enable="true">
+	<name><![CDATA[Unified Audit (Memory)]]></name>
+	<description><![CDATA[]]></description>
 	<tooltip><![CDATA[]]></tooltip>
 	<drillclass><![CDATA[]]></drillclass>
 	<CustomValues>
 		<TYPE><![CDATA[horizontal]]></TYPE>
 	</CustomValues>
 	<query>
-		<sql><![CDATA[SELECT o.status,
-o.object_id,
-o.object_type,
-o.owner
-||'.'
-||object_name "OWNER.OBJECT"
-FROM dba_objects o,
-dba_datapump_jobs j
-WHERE o.owner =j.owner_name
-AND o.object_name=j.job_name
-AND j.job_name NOT LIKE 'BIN$%'
-ORDER BY 4,2]]></sql>
+		<sql><![CDATA[SELECT "EVENT_TIMESTAMP", "OS_USER", "HOST_NAME", "TERMINAL", "USERID", "CLIENT_PROGRAM_NAME", "OBJ_NAME", "SQL_TEXT" FROM(
+select event_timestamp,os_user,host_name,terminal,userid,client_program_name,obj_name,sql_text
+from V$UNIFIED_AUDIT_TRAIL
+--where userid not in ('SYS')
+order by event_timestamp desc
+)]]></sql>
 	</query>
 		<pdf version="VERSION_1_7" compression="CONTENT">
 			<docproperty title="" author="" subject="" keywords="" />
@@ -36,76 +30,7 @@ ORDER BY 4,2]]></sql>
 				
 				
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				null																																																																																																																																																																																																																																																																																																				</data>
+				null																</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

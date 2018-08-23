@@ -38,7 +38,17 @@ from dba_ilmpolicies p inner join dba_ilmdatamovementpolicies pd on (p.policy_na
 				
 				
 				
-				null																																				</data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																												</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

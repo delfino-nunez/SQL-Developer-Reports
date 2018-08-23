@@ -53,7 +53,17 @@ where status !='VALID' order by owner, object_type, object_name
 				
 				
 				
-				null																																																																																																																				</data>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				null																																																																																																																																																												</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />

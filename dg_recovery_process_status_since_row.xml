@@ -74,7 +74,17 @@ select inst_id "Instance", process, thread#, sequence#, status from gv$managed_s
 					
 					
 					
-					null																																																																																																																																																																																																																																																														</data>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					null																																																																																																																																																																																																																																																																																																																</data>
 			</header>
 			<footer enable="false" generatedate="false">
 				<data value="null" />
