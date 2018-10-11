@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<displays>
+<display id="1d024144-0166-1000-8001-a9feb6d3987e" type="" style="Table" enable="true">
+	<name><![CDATA[Tablespace OEM Style]]></name>
+	<description><![CDATA[]]></description>
+	<tooltip><![CDATA[]]></tooltip>
+	<drillclass><![CDATA[]]></drillclass>
+	<CustomValues>
+		<TYPE><![CDATA[horizontal]]></TYPE>
+	</CustomValues>
+	<query>
+		<sql><![CDATA[WITH df AS (
+    SELECT
+        tablespace_name,
+        SUM(bytes) bytes,
+        COUNT(file_id) cnt,
+        DECODE(SUM(DECODE(autoextensible,'NO',0,1) ),0,'NO','YES') autoextensible
+    FROM
+        dba_data_files
+    GROUP BY
+        tablespace_name
+),um AS (
+    SELECT
+        tablespace_name,
+        used_space,
+        used_percent
+    FROM
+        dba_tablespace_usage_metrics
+),
+su as (SELECT
+    d.tablespace_name,
+    u.used_percent available_space_used_percent,
+    nvl( (a.bytes - nvl(f.bytes,0) ) / a.bytes * 100,0) allocated_space_used_percent,
+    a.autoextensible,
+    nvl(a.bytes,0) / 1024 / 1024 / 1024 allocated_size_gb,
+    nvl(a.bytes - nvl(f.bytes,0),0) / 1024 / 1024 / 1024 space_used_gb,
+    nvl(f.bytes,0) / 1024 / 1024 / 1024 allocated_free_space_gb,
+    d.status,
+    a.cnt data_files,
+    d.contents type,
+    d.extent_management,
+    d.segment_space_management
+  FROM
+      dba_tablespaces d,
+      df a,
+      um u,
+      (
+          SELECT
+              ts.tablespace_name,
+              nvl(SUM(e.blocks * ts.block_size),0) bytes
+          FROM
+              dba_lmt_free_space e,
+              dba_tablespaces ts,
+              dba_data_files df
+          WHERE
+              ts.tablespace_name = df.tablespace_name
+              AND e.file_id = df.relative_fno
+          GROUP BY
+              ts.tablespace_name
+          UNION ALL
+          SELECT
+              ts.tablespace_name,
+              nvl(SUM(fs.blocks * ts.block_size),0) bytes
+          FROM
+              dba_dmt_free_space fs,
+              dba_tablespaces ts,
+              dba_data_files df
+          WHERE
+              ts.tablespace_name = df.tablespace_name
+              AND fs.file_id = df.relative_fno
+          GROUP BY
+              ts.tablespace_name
+      ) f
+  WHERE
+      d.tablespace_name = a.tablespace_name (+)
+      AND d.tablespace_name = f.tablespace_name (+)
+      AND d.tablespace_name = u.tablespace_name (+)
+      AND NOT d.contents = 'UNDO'
+      AND NOT (
+          d.extent_management = 'LOCAL'
+          AND d.contents = 'TEMPORARY'
+      )
+UNION ALL
+SELECT
+    d.tablespace_name,
+    u.used_percent,
+    nvl( (u.used_space * d.block_size) / tf.bytes * 100,0),
+    tf.autoextensible,
+    nvl(tf.bytes,0) / 1024 / 1024 / 1024,
+    nvl(u.used_space * d.block_size,0) / 1024 / 1024 / 1024,
+    ( nvl(tf.bytes,0) - nvl(u.used_space * d.block_size,0) ) / 1024 / 1024 / 1024,
+    d.status,
+    tf.cnt,
+    d.contents,
+    d.extent_management,
+    d.segment_space_management
+FROM
+    dba_tablespaces d,
+    um u,
+    (
+        SELECT
+            tablespace_name,
+            SUM(bytes) bytes,
+            COUNT(file_id) cnt,
+            DECODE(SUM(DECODE(autoextensible,'NO',0,1) ),0,'NO','YES') autoextensible
+        FROM
+            dba_temp_files
+        GROUP BY
+            tablespace_name
+    ) tf
+WHERE
+    d.tablespace_name = tf.tablespace_name (+)
+    AND d.tablespace_name = u.tablespace_name (+)
+    AND d.extent_management = 'LOCAL'
+    AND d.contents = 'TEMPORARY'
+UNION ALL
+SELECT
+    d.tablespace_name,
+    u.used_percent,
+    nvl( (u.used_space * d.block_size) / a.bytes * 100,0),
+    a.autoextensible,
+    nvl(a.bytes,0) / 1024 / 1024 / 1024,
+    nvl(u.used_space * d.block_size,0) / 1024 / 1024 / 1024,
+    ( nvl(a.bytes,0) - nvl(u.used_space * d.block_size,0) ) / 1024 / 1024 / 1024,
+    d.status,
+    a.cnt,
+    d.contents,
+    d.extent_management,
+    d.segment_space_management
+FROM
+    dba_tablespaces d,
+    df a,
+    um u
+WHERE
+    d.tablespace_name = a.tablespace_name (+)
+    AND d.tablespace_name = u.tablespace_name (+)
+    AND d.contents = 'UNDO'
+    )
+select 
+    sys_context('USERENV','CON_NAME') container,tablespace_name Tablespace,  
+    round(nvl(available_space_used_percent,0),2) "% USED OF AVAILABLE SPACE",
+    'SQLDEV:GAUGE:0:100:0:0:'|| round(nvl(available_space_used_percent,0),2) "AVAILABLE USED",
+    round(nvl(allocated_space_used_percent,0),2) "% USED OF ALLOCATED SPACE",
+    'SQLDEV:GAUGE:0:100:0:0:'|| round(nvl(allocated_space_used_percent,0),2) "ALLOCATED USED",
+    autoextensible,
+    round(allocated_size_gb,2) "GB ALLOCATED",
+    round(space_used_gb,2) "GB ALLOCATED USED",
+    round(allocated_free_space_gb,2) "GB FREE ALLOCATED SPACE",
+    status,
+    data_files "# DATAFILES",
+    type,
+    extent_management,
+    segment_space_management
+from su
+order by
+   "% USED OF ALLOCATED SPACE"  desc]]></sql>
+	</query>
+		<pdf version="VERSION_1_7" compression="CONTENT">
+			<docproperty title="" author="" subject="" keywords="" />
+			<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+			<column>
+				<heading font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+				<footing font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+				<blob blob="NONE" zip="false" />
+			</column>
+			<table font="null" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+			<header enable="false" generatedate="false">
+				<data>
+				null				</data>
+			</header>
+			<footer enable="false" generatedate="false">
+				<data value="null" />
+			</footer>
+			<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+		</pdf>
+	<display id="null" type="" style="Table" enable="true">
+		<name><![CDATA[Tablespace datafiles              ]]></name>
+		<description><![CDATA[]]></description>
+		<tooltip><![CDATA[]]></tooltip>
+		<drillclass><![CDATA[]]></drillclass>
+		<CustomValues>
+			<TYPE><![CDATA[horizontal]]></TYPE>
+		</CustomValues>
+		<query>
+			<sql><![CDATA[WITH tempfiles as (
+SELECT
+    d.file_id,
+    substr(d.file_name,1, instr(d.file_name,'/')-1) ASM_DISKGROUP,
+    nvl(d.file_name,df.name) file_name,
+    nvl(d.bytes,0) / 1024 / 1024 size_mb,
+    nvl2(d.bytes,t.bytes_used,0) / 1024 / 1024 used_mb,
+    round(d.maxbytes/1024/1024,2) max_mb,
+    d.autoextensible,
+    round(d.increment_by * nvl((select max(block_size) from dba_tablespaces where tablespace_name = d.tablespace_name),1)/1024/1024)INCREMENT_BY_MB,
+    d.maxblocks
+FROM
+    v$tempfile df,
+    sys.dba_temp_files d,
+    v$temp_extent_pool t
+WHERE
+    t.file_id (+) = d.file_id 
+    AND d.tablespace_name = UPPER(:TABLESPACE)
+    AND df.file# = d.file_id
+    )
+    
+,permfiles as (
+SELECT
+    d.file_id,
+    substr(d.file_name,1, instr(d.file_name,'/')-1) ASM_DISKGROUP,
+    d.file_name,
+    round(d.bytes / 1024 / 1024,2) size_mb,
+    round(nvl( ( (d.bytes - s.bytes) / 1024 / 1024), (d.bytes / 1024 / 1024) ),2) Used_Mb,
+    d.autoextensible,
+    round(d.increment_by * nvl((select max(block_size) from dba_tablespaces where tablespace_name = d.tablespace_name),1)/1024/1024)INCREMENT_BY_MB,
+    round(d.maxbytes/1024/1024,2) max_mb
+FROM
+    sys.dba_data_files d,
+    (
+        SELECT
+            file# file_id,
+            SUM(e.length * ts.blocksize) bytes
+        FROM
+            sys.fet$ e,
+            sys.ts$ ts
+        WHERE
+            ts.ts# = e.ts#
+            AND ts.name = UPPER(:TABLESPACE)
+        GROUP BY
+            file#
+        UNION ALL
+        SELECT
+            f.file# file_id,
+            SUM(e.blocks * ts.blocksize) bytes
+        FROM
+            sys.file$ f,
+            sys.dba_lmt_free_space e,
+            sys.ts$ ts
+        WHERE
+            ts.ts# = e.tablespace_id
+            AND f.ts# = ts.ts#
+            AND f.relfile# = e.file_id
+            AND ts.name = UPPER(:TABLESPACE)
+        GROUP BY
+            f.file#
+    ) s
+WHERE
+    s.file_id (+) = d.file_id
+    AND d.tablespace_name = UPPER(:TABLESPACE)
+)
+select 
+file_id,
+asm_diskgroup,
+file_name,
+size_mb,
+used_mb,
+max_mb,
+autoextensible,
+'SQLDEV:GAUGE:0:100:0:0:'|| round((used_mb * 100)/size_mb) Used,
+increment_by_mb
+from permfiles
+
+union all
+
+select  
+file_id,
+asm_diskgroup,
+file_name,
+size_mb,
+used_mb,
+max_mb,
+autoextensible,
+'SQLDEV:GAUGE:0:100:0:0:'|| round((used_mb * 100)/size_mb) Used,
+increment_by_mb
+from tempfiles]]></sql>
+			<binds>
+				<bind id="TABLESPACE">
+					<prompt><![CDATA[TABLESPACE]]></prompt>
+					<tooltip><![CDATA[TABLESPACE]]></tooltip>
+					<value><![CDATA[NULL_VALUE]]></value>
+					<bracket><![CDATA[null]]></bracket>
+				</bind>
+			</binds>
+		</query>
+			<pdf version="VERSION_1_7" compression="CONTENT">
+				<docproperty title="" author="" subject="" keywords="" />
+				<cell toppadding="2" bottompadding="2" leftpadding="2" rightpadding="2" horizontalalign="LEFT" verticalalign="TOP" wrap="true" />
+				<column>
+					<heading font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="FIRST_PAGE" />
+					<footing font="null" size="10" style="NORMAL" color="-16777216" rowshading="-1" labeling="NONE" />
+					<blob blob="NONE" zip="false" />
+				</column>
+				<table font="null" size="10" style="NORMAL" color="-16777216" userowshading="false" oddrowshading="-1" evenrowshading="-1" showborders="true" spacingbefore="12" spacingafter="12" horizontalalign="LEFT" />
+				<header enable="false" generatedate="false">
+					<data>
+					null					</data>
+				</header>
+				<footer enable="false" generatedate="false">
+					<data value="null" />
+				</footer>
+				<pagesetup papersize="LETTER" orientation="1" measurement="in" margintop="1.0" marginbottom="1.0" marginleft="1.0" marginright="1.0" />
+			</pdf>
+	</display>
+</display>
+</displays>
